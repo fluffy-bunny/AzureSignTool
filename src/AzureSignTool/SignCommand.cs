@@ -28,6 +28,9 @@ namespace AzureSignTool
         [Option("-kvs | --azure-key-vault-client-secret", "The Client Secret to authenticate to the Azure Key Vault.", CommandOptionType.SingleValue)]
         public (bool Present, string Value) KeyVaultClientSecret { get; set; }
 
+        [Option("-kvm | --azure-key-vault-managedidentity", "Utilize Azure Managed Identity to authenticate to KeyVault.", CommandOptionType.NoValue)]
+        public bool UseManagedIdentity { get; set; }
+
         [Option("-kvc | --azure-key-vault-certificate", "The name of the certificate in Azure Key Vault.", CommandOptionType.SingleValue), Required]
         public string KeyVaultCertificate { get; set; }
 
@@ -128,10 +131,6 @@ namespace AzureSignTool
             {
                 return new ValidationResult("Cannot use '--quiet' and '--verbose' options together.", new[] { nameof(NoPageHashing), nameof(PageHashing) });
             }
-            if (!OneTrue(KeyVaultAccessToken.Present, KeyVaultClientId.Present))
-            {
-                return new ValidationResult("One of '--key-vault-access-token' or '--key-vault-client-id' must be supplied.", new[] { nameof(KeyVaultAccessToken), nameof(KeyVaultClientId) });
-            }
 
             if (Rfc3161Timestamp.Present && AuthenticodeTimestamp.Present)
             {
@@ -193,6 +192,7 @@ namespace AzureSignTool
                     AzureClientId = KeyVaultClientId.Value,
                     AzureAccessToken = KeyVaultAccessToken.Value,
                     AzureClientSecret = KeyVaultClientSecret.Value,
+                    AzureManagedIdentity = UseManagedIdentity
                 };
 
                 TimeStampConfiguration timeStampConfiguration;

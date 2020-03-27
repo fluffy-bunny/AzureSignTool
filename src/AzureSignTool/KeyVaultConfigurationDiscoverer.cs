@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.KeyVault.Models;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
@@ -44,8 +45,18 @@ namespace AzureSignTool
                     return null;
                 }
             }
-
-            var vault = new KeyVaultClient(Authenticate);
+            KeyVaultClient vault = null;
+            if (configuration.AzureManagedIdentity)
+            {
+                // we try the managed identity approach
+                AzureServiceTokenProvider azureServiceTokenProvider = new AzureServiceTokenProvider();
+                vault = new KeyVaultClient(
+                  new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
+            }
+            else
+            {
+                vault = new KeyVaultClient(Authenticate);
+            }
             
             X509Certificate2 certificate;
             CertificateBundle azureCertificate;
