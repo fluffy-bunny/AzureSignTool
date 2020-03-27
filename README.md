@@ -14,6 +14,7 @@ Example usage:
 	  -kvi 01234567-abcd-ef012-0000-0123456789ab \
 	  -kvs <token> \
 	  -kvc my-key-name \
+	  -kvm \
 	  -tr http://timestamp.digicert.com \
 	  -td sha384 \
 	  -v \
@@ -28,6 +29,8 @@ The `--help` or `sign --help` option provides more detail about each parameter.
 
 * `--azure-key-vault-url` [short: `-kvu`, required: yes]: A fully qualified URL of the key vault with
 	the certificate that will be used for signing. An example value might be `https://my-vault.vault.azure.net`.
+
+* `--azure-key-vault-client-id` [short: `-kvm`, required: possibly]: Use Managed Identity, as apposed to passing in a 		client_id/client_secret.  Takes presidence over -kvi/-kvs
 
 * `--azure-key-vault-client-id` [short: `-kvi`, required: possibly]: This is the client ID used to authenticate to
 	Azure, which will be used to generate an access token. This parameter is not required if an access token is supplied
